@@ -6,7 +6,7 @@ this repository hosts static files used as a simple **cdn** for the website [dis
 
 files can be referenced directly from your website. examples:
 
-**video:**
+**example for a video:**
 ```
 <video width="100%" controls>
   <source src="https://gablilli.github.io/cdn/public/video_basilica.mp4" type="video/mp4">
@@ -14,23 +14,26 @@ files can be referenced directly from your website. examples:
 </video>
 ```
 
-## deployment
-
+## deployment
 to update the cdn with new files or videos:
 
-    add new files to your local repository, keeping filenames simple (no spaces or special characters).
+- add new files to your local repository, keeping filenames simple (no spaces or special characters).
 
-    stage and commit the files:
-    ```
-    git add .
-    git commit -m "add new cdn assets"
-    ```
+- stage and commit the files (use github-lsf for bigger files):
 
-    pull remote changes to avoid conflicts:
+  ```
+  git add .
+  git commit -m "add new cdn assets"
+  ```
+
+- pull remote changes to avoid conflicts:
+    
     ```
     git pull origin main --rebase
     ```
-    push your changes:
+    
+- push your changes:
+    
     ```
     git push origin main
     ```
