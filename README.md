@@ -9,7 +9,7 @@ files can be referenced directly from your website. examples:
 **example for a video:**
 ```
 <video width="100%" controls>
-  <source src="https://gablilli.github.io/cdn/public/video_basilica.mp4" type="video/mp4">
+  <source src="https://cdn.discoverygubbio.com/public/video_basilica.mp4" type="video/mp4">
   your browser does not support the video tag.
 </video>
 ```
