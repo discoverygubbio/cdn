@@ -22,7 +22,7 @@ to update the cdn with new files or videos:
 - stage and commit the files (use github-lsf for bigger files):
 
   ```
-  git add .
+  git add [something]
   git commit -m "add new cdn assets"
   ```
 
