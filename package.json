@@ -1,3 +1,17 @@
-"scripts": {
-  "start": "node server.js"
+{
+  "name": "cdn",
+  "version": "1.0.0",
+  "description": "This repository hosts static files used as a simple cdn for the website discoverygubbio.com. It includes videos, images, scripts, and other static assets.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0",
+    "node-fetch": "^3.3.2"
+  }
 }
