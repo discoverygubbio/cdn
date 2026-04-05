@@ -1,45 +1,104 @@
-# cdn for discoverygubbio.com
+# 🚀 cdn discoverygubbio cf worker
 
-this repository hosts static files used as a simple **cdn** for the website [discoverygubbio.com](https://discoverygubbio.com). it includes videos, images, scripts, and other static assets that are served directly to the website visitors for faster loading and better performance.
+un semplice cloudflare worker che usa supabase storage come backend cdn, con supporto completo per lo streaming video (byte-range requests) e cache aggressiva sull'edge di cloudflare.
 
-## how to use the cdn
+---
 
-files can be referenced directly from your website. examples:
+## ✨ features
 
-**example for a video:**
+- ⚡ streaming video con supporto `range` requests (zero stuttering)
+- 🌍 cache globale sull'edge cloudflare (`cf.cacheEverything`)
+- 🔁 passthrough trasparente degli header
+- 🔒 bucket supabase pubblico, nessuna chiave api esposta
+- 🪶 ~15 righe di codice
+
+---
+
+## 📋 requisiti
+
+- account [cloudflare](https://cloudflare.com) (gratuito)
+- progetto [supabase](https://supabase.com) con storage bucket **pubblico**
+- dominio su cloudflare (anche gratuito)
+
+---
+
+## 🛠️ setup
+
+### 1. crea il worker
+
+vai su **cloudflare dashboard → workers & pages → create worker**, incolla il codice e fai deploy.
+
+### 2. codice `worker.js`
+
+```js
+export default {
+  async fetch(request) {
+    const url = new URL(request.url);
+    const target = `https://<PROJECT_ID>.supabase.co/storage/v1/object/public/<BUCKET>${url.pathname}`;
+
+    const response = await fetch(target, {
+      headers: request.headers, // passa Range, ecc.
+      cf: {
+        cacheEverything: true,
+        cacheTtl: 31536000,
+      },
+    });
+
+    const headers = new Headers(response.headers);
+    headers.set("Cache-Control", "public, max-age=31536000");
+    headers.set("Accept-Ranges", "bytes");
+
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
+  },
+};
 ```
-<video width="100%" controls>
-  <source src="https://cdn.discoverygubbio.com/public/video_basilica.mp4" type="video/mp4">
-  your browser does not support the video tag.
-</video>
+
+sostituisci:
+- `<PROJECT_ID>` → il tuo project id supabase
+- `<BUCKET>` → il nome del tuo bucket (es. `cdn`)
+
+### 3. aggiungi il dominio custom
+
+in **cloudflare → workers → settings → triggers → custom domains**, aggiungi il tuo sottodominio, es:
+
+```
+assets.tuodominio.com
 ```
 
-## deployment
-to update the cdn with new files or videos:
+cloudflare gestisce automaticamente il certificato ssl. ✅
 
-- add new files to your local repository, keeping filenames simple (no spaces or special characters).
+---
 
-- stage and commit the files (use github-lsf for bigger files):
+## 📦 utilizzo
 
-  ```
-  git add [something]
-  git commit -m "add new cdn assets"
-  ```
+dopo il deploy, i tuoi file sono accessibili così:
 
-- pull remote changes to avoid conflicts:
-    
-    ```
-    git pull origin main --rebase
-    ```
-    
-- push your changes:
-    
-    ```
-    git push origin main
-    ```
+```
+# prima (url supabase)
+https://<PROJECT_ID>.supabase.co/storage/v1/object/public/cdn/video.mp4
 
-> note: when using mp4 videos on github pages, ensure the mime type is correct. if issues occur, renaming .mp4 to .mp4v files can sometimes help.
+# dopo (dominio custom + cdn)
+https://assets.tuodominio.com/video.mp4
+```
 
-## license
-this repository is released under the mit license. (see also [LICENSE.md](/license.md))
-> this repo is designed to support discoverygubbio.com as a free and fast cdn for its static assets.
+---
+
+## ⚠️ limitazioni
+
+| cosa | limite |
+|---|---|
+| cloudflare workers (free) | 100.000 richieste/giorno |
+| supabase storage (free) | 1 gb totale |
+| video streaming | funziona, ma supabase non è ottimizzato per video pesanti |
+
+> 💡 per video di grandi dimensioni o traffico alto, considera [bunny.net](https://bunny.net) o [cloudflare stream](https://www.cloudflare.com/products/cloudflare-stream/).
+
+---
+
+## 📄 licenza
+
+mit
