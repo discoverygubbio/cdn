@@ -101,4 +101,4 @@ https://assets.tuodominio.com/video.mp4
 
 ## 📄 licenza
 
-mit
+gpl. vedi [LICENSE](LICENSE.md)
